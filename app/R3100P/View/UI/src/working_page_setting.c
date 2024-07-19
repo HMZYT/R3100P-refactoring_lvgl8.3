@@ -103,10 +103,12 @@ lv_obj_t* working_page_setting_init(lv_obj_t *page)
         _button_set_v(p->btns[i], 0);
     }
 
-    //观察者模式
-    //lv_subject_add_observer_obj(&subject_note_all, note_observer_list_cb, page, NULL);
-
     return obj;
+}
+
+void * settings_refresh(void *data)
+{
+
 }
 
 static setting_lcd_button_t *_create_button(lv_obj_t *parent)

@@ -20,6 +20,7 @@ extern "C" {
 #include "../../res/fonts/language_control.h"
 #include "../../theme/inc/theme_R1100P_white.h"
 #include "../../theme/inc/theme_style.h"
+#include "../../../Model/inc/dt_r3000p_ui_data.h"
 
 typedef struct{
     int32_t current_value;
@@ -115,7 +116,6 @@ typedef struct{
     lv_obj_t *oil_rect[ 10 ];
     lv_obj_t *danger;
     lv_obj_t *danger_icon;
-		
     lv_obj_t *red_obj;
     lv_obj_t *yellow_obj;
     lv_obj_t *green_obj;
@@ -124,7 +124,7 @@ typedef struct{
 }working_page_home_t;
 
 extern lv_obj_t* working_page_home_init(lv_obj_t *page);
-extern void * refresh(lv_obj_t *page, void *data);
+extern void * home_refresh(void *data);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

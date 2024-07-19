@@ -7,11 +7,10 @@
 #include "../../User/inc/images_v4_0.h"
 #include "../../User/inc/UiRun.h"
 
-static lv_style_t style8;
-
+static working_page_arms_t *p;
 lv_obj_t* working_page_arms_init(lv_obj_t *page)
 {
-    working_page_arms_t *p = lv_mem_alloc(sizeof (working_page_arms_t));
+    p = lv_mem_alloc(sizeof (working_page_arms_t));
 
     uint16_t parent_width, parent_height;
 
@@ -290,193 +289,200 @@ static void _set_data_m(lv_obj_t *label, int32_t v)
     lv_label_set_text(label, temp);
 }
 
-//static void arms_observer_list_cb(lv_observer_t *observer, lv_subject_t *subject)
-//{
-//#if 1
-//    working_page_arms_t *p = (working_page_arms_t *) observer->user_data;
-//    static uint8_t mode_choose = 0;
-//    static int _count0 = 0;
-//    static bool change_flag = false;
-//    static uint8_t mode_number = 1;
-//    static uint8_t mode_final = 1;
-//    temp_value_t powerkey = lv_subject_get_int_from_type(subject, system_paras_power_key, 0, pageid_system);
-//    temp_value_t arm_pos_max = lv_subject_get_int_from_type(subject, machine_arm_pos_max, 0, pageid_home);
-//    temp_value_t arm_pos_min = lv_subject_get_int_from_type(subject, machine_arm_pos_min, 0, pageid_home);
-//    temp_value_t arm_pos = lv_subject_get_int_from_type(subject, machine_arm_pos, 0, pageid_home);
-//    temp_value_t arm1_status = lv_subject_get_int_from_type(subject, machine_arm1_status, 0, pageid_home);
-//    temp_value_t arm2_status = lv_subject_get_int_from_type(subject, machine_arm2_status, 0, pageid_home);
-//    temp_value_t arm3_status = lv_subject_get_int_from_type(subject, machine_arm3_status, 0, pageid_home);
-//    temp_value_t arm4_status = lv_subject_get_int_from_type(subject, machine_arm4_status, 0, pageid_home);
-//    temp_value_t arm5_status = lv_subject_get_int_from_type(subject, machine_arm5_status, 0, pageid_home);
-//    temp_value_t arm6_status = lv_subject_get_int_from_type(subject, machine_arm6_status, 0, pageid_home);
-//    temp_value_t arm0_status = lv_subject_get_int_from_type(subject, machine_arm0_status, 0, pageid_home);
-//
-//    //边框初始化
-//    for(int i = 0; i < 7; i++)
-//    {
-//        lv_obj_set_style_border_color(p->mode_bg[i] ,lv_color_make(0xde, 0xde, 0xde),LV_STATE_DEFAULT);
-//    }
-//
-//    //红框标定选定模式
-//    lv_obj_set_style_border_color(p->mode_bg[mode_choose] ,lv_color_make(0xff, 0x00, 0x00),LV_STATE_DEFAULT);
-//
-//    //绿框标定当前按钮选中模式
-//    if (mode_choose != (mode_number+7)%7)
-//    {
-//        _count0++;
-//        if (_count0 >4)
-//        {
-//            change_flag = !change_flag ;
-//            _count0 = 0;
-//        }
-//        if(change_flag)
-//        {
-//            lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0x00, 0xff, 0x00),LV_STATE_DEFAULT);
-//            lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 4,LV_STATE_DEFAULT);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0xde, 0xde, 0xde),LV_STATE_DEFAULT);
-//            lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 2,LV_STATE_DEFAULT);
-//        }
-//    }
-//    else
-//    {
-//        _count0++;
-//        if (_count0 >4)
-//        {
-//            change_flag = !change_flag ;
-//            _count0 = 0;
-//        }
-//        if(change_flag)
-//        {
-//            lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0x00, 0xff, 0x00),LV_STATE_DEFAULT);
-//            lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 4,LV_STATE_DEFAULT);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0xff, 0x00, 0x00),LV_STATE_DEFAULT);
-//            lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 4,LV_STATE_DEFAULT);
-//        }
-//    }
-//
-//    if (powerkey.different_flag && powerkey.current_value == 1)
-//    {
-//        mode_final = (mode_number+7)%7;
-//        mode_choose = mode_final;
-//    }
-//
-//    //刷新实时姿态
-//    if (arm_pos_max.different_flag)
-//    {
-//        _set_data_m(p->label_show[0], arm_pos_max.current_value);
-//    }
-//
-//    if (arm_pos_min.different_flag)
-//    {
-//        _set_data_m(p->label_show[1], arm_pos_min.current_value);
-//    }
-//
-//    if (arm_pos.different_flag)
-//    {
-//        _set_data_m(p->label_show[2], arm_pos.current_value);
-//    }
-//
-//    if (arm1_status.different_flag)
-//    {
-//        _set_data(p->label_show[3], arm1_status.current_value);
-//    }
-//
-//    if (arm2_status.different_flag)
-//    {
-//        _set_data(p->label_show[4], arm2_status.current_value);
-//    }
-//
-//    if (arm3_status.different_flag)
-//    {
-//        _set_data(p->label_show[5], arm3_status.current_value);
-//    }
-//
-//    if (arm4_status.different_flag)
-//    {
-//        _set_data(p->label_show[6], arm4_status.current_value);
-//    }
-//
-//    if (arm5_status.different_flag)
-//    {
-//        _set_data(p->label_show[7], arm5_status.current_value);
-//    }
-//
-//    if (arm6_status.different_flag)
-//    {
-//        _set_data(p->label_show[8], arm6_status.current_value);
-//    }
-//
-//    if (arm0_status.different_flag)
-//    {
-//        _set_data(p->label_show[9], arm0_status.current_value);
-//    }
-//    //计算每个臂倾角
-//
-//    int16_t ag[6];
-//    double AG[6];
-//    int16_t Vx[7],Vy[7],V[7],lg[7] = {0, 135, 90, 86, 78, 68, 56};
-//    ag[0] = (int16_t)(arm1_status.current_value / 10 ) ;
-//    ag[1] = (int16_t)((arm1_status.current_value + arm2_status.current_value) / 10 );
-//    ag[2] = (int16_t)((arm1_status.current_value + arm2_status.current_value + arm3_status.current_value) / 10 );
-//    ag[3] = (int16_t)((arm1_status.current_value + arm2_status.current_value + arm3_status.current_value + arm4_status.current_value) / 10 );
-//    ag[4] = (int16_t)((arm1_status.current_value + arm2_status.current_value + arm3_status.current_value + arm4_status.current_value
-//                       + arm5_status.current_value) / 10 );
-//    ag[5] = (int16_t)((arm1_status.current_value + arm2_status.current_value + arm3_status.current_value + arm4_status.current_value
-//                       + arm5_status.current_value + arm6_status.current_value) / 10 ) ;
-//
-//    //计算每个臂倾角弧度
-//    for(int i = 0; i < 6; i++)
-//    {
-//        AG[i] = ag[i]* 3.14 / 180;
-//    }
-//
-//    Vx[0] = 710;
-//    Vy[0] = 530;
-//
-//    for(int i=1; i<7; i++)
-//    {
-//        Vx[i] = Vx[i-1] + lg[i]*cos(AG[i-1]);
-//        Vy[i] = Vy[i-1] - lg[i]*sin(AG[i-1]);
-//    }
-//
-//    lv_img_set_angle(p->arm_01,  -ag[0] * 10);
-//
-//    lv_obj_set_pos(p->arm_02, Vx[1] , Vy[1]);
-//    lv_img_set_angle(p->arm_02,  -ag[1] * 10);
-//
-//    lv_obj_set_pos(p->arm_03, Vx[2] , Vy[2]);
-//    lv_img_set_angle(p->arm_03,  -ag[2] * 10);
-//
-//    lv_obj_set_pos(p->arm_04, Vx[3] , Vy[3]);
-//    lv_img_set_angle(p->arm_04,  -ag[3] * 10);
-//
-//    lv_obj_set_pos(p->arm_05, Vx[4] , Vy[4]);
-//    lv_img_set_angle(p->arm_05,  -ag[4] * 10);
-//
-//    lv_obj_set_pos(p->arm_06, Vx[5] , Vy[5]);
-//    lv_img_set_angle(p->arm_06,  -ag[5] * 10);
-//
-//    lv_obj_set_pos(p->arm_07, Vx[6] , Vy[6]);
-//    lv_img_set_angle(p->arm_07, 900);
-//
-//    for(int i=1; i<7; i++)
-//    {
-//        Vx[i] = Vx[i-1] + (lg[i]-1)*cos(AG[i-1]);
-//        Vy[i] = Vy[i-1] - (lg[i])*sin(AG[i-1]);
-//    }
-//
-//    lv_obj_set_pos(p->arm_p02, Vx[1] , Vy[1]);
-//    lv_obj_set_pos(p->arm_p03, Vx[2] , Vy[2]);
-//    lv_obj_set_pos(p->arm_p04, Vx[3] , Vy[3]);
-//    lv_obj_set_pos(p->arm_p05, Vx[4] , Vy[4]);
-//    lv_obj_set_pos(p->arm_p06, Vx[5] , Vy[5]);
-//    lv_obj_set_pos(p->arm_p07, Vx[6] , Vy[6]);
-//#endif
-//
-//}
+void * arms_refresh(void *data) {
+
+    static dt_machine_status_t last;
+    static dt_rc_status_t last_rc;
+    char temp[64];
+    dt_ui_t *d = (dt_ui_t *)data;
+
+    int mode_choose = 0;
+    int mode_number = 0;
+    int arms_flag = 0;
+    int i = 0;
+    int _count0 = 0;
+    bool change_flag = 0;
+
+    //边框初始化
+    for(i = 0; i < 7; i++)
+    {
+        lv_obj_set_style_border_color(p->mode_bg[i] ,lv_color_make(0xde, 0xde, 0xde),LV_STATE_DEFAULT);
+    }
+
+    //红框标定选定模式
+    lv_obj_set_style_border_color(p->mode_bg[mode_choose] ,lv_color_make(0xff, 0x00, 0x00),LV_STATE_DEFAULT);
+    //lv_obj_set_style_border_color(p->mode_bg[1] ,lv_color_make(0xff, 0x00, 0x00),LV_STATE_DEFAULT);
+    if (arms_flag)
+    {
+        //绿框标定当前按钮选中模式
+        if (mode_choose != (mode_number+7)%7)
+        {
+            _count0++;
+            if (_count0 >4)
+            {
+                change_flag = !change_flag ;
+                _count0 = 0;
+            }
+            if(change_flag)
+            {
+                lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0x00, 0xff, 0x00),LV_STATE_DEFAULT);
+                lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 4,LV_STATE_DEFAULT);
+            }
+            else
+            {
+                lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0xde, 0xde, 0xde),LV_STATE_DEFAULT);
+                lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 2,LV_STATE_DEFAULT);
+            }
+        }
+        else
+        {
+            _count0++;
+            if (_count0 >4)
+            {
+                change_flag = !change_flag ;
+                _count0 = 0;
+            }
+            if(change_flag)
+            {
+                lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0x00, 0xff, 0x00),LV_STATE_DEFAULT);
+                lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 4,LV_STATE_DEFAULT);
+            }
+            else
+            {
+                lv_obj_set_style_border_color(p->mode_bg[(mode_number+7)%7] ,lv_color_make(0xff, 0x00, 0x00),LV_STATE_DEFAULT);
+                lv_obj_set_style_border_width(p->mode_bg[(mode_number+7)%7], 4,LV_STATE_DEFAULT);
+            }
+        }
+
+        // if (d->rc.powerkey == 0 && last_key == 1)
+        // {
+        // 	mode_final = (mode_number+7)%7;
+        // 	mode_choose = mode_final;
+        // }
+    }
+    // last_key = d->rc.powerkey;
+
+    //刷新实时姿态
+    if (last.arm_pos_max != d->dt_work.machine.arm_pos_max)
+    {
+        _set_data_m(p->label_show[0], d->dt_work.machine.arm_pos_max);
+        last.arm_pos_max = d->dt_work.machine.arm_pos_max;
+    }
+
+    if (last.arm_pos_min != d->dt_work.machine.arm_pos_min)
+    {
+        _set_data_m(p->label_show[1], d->dt_work.machine.arm_pos_min);
+        last.arm_pos_min = d->dt_work.machine.arm_pos_min;
+    }
+
+    if (last.arm_pos != d->dt_work.machine.arm_pos)
+    {
+        _set_data_m(p->label_show[2], d->dt_work.machine.arm_pos);
+        last.arm_pos = d->dt_work.machine.arm_pos;
+    }
+
+    if (last.arm1_status != d->dt_work.machine.arm1_status)
+    {
+        _set_data(p->label_show[3], d->dt_work.machine.arm1_status);
+        last.arm1_status = d->dt_work.machine.arm1_status;
+    }
+
+    if (last.arm2_status != d->dt_work.machine.arm2_status)
+    {
+        _set_data(p->label_show[4], d->dt_work.machine.arm2_status);
+        last.arm2_status = d->dt_work.machine.arm2_status;
+    }
+
+    if (last.arm3_status != d->dt_work.machine.arm3_status)
+    {
+        _set_data(p->label_show[5], d->dt_work.machine.arm3_status);
+        last.arm3_status = d->dt_work.machine.arm3_status;
+    }
+
+    if (last.arm4_status != d->dt_work.machine.arm4_status)
+    {
+        _set_data(p->label_show[6], d->dt_work.machine.arm4_status);
+        last.arm4_status = d->dt_work.machine.arm4_status;
+    }
+
+    if (last.arm5_status != d->dt_work.machine.arm5_status)
+    {
+        _set_data(p->label_show[7], d->dt_work.machine.arm5_status);
+        last.arm5_status = d->dt_work.machine.arm5_status;
+    }
+
+    if (last.arm6_status != d->dt_work.machine.arm6_status)
+    {
+        _set_data(p->label_show[8], d->dt_work.machine.arm6_status);
+        last.arm6_status = d->dt_work.machine.arm6_status;
+    }
+
+    if (last.arm0_status != d->dt_work.machine.arm0_status)
+    {
+        _set_data(p->label_show[9], d->dt_work.machine.arm0_status);
+        last.arm0_status = d->dt_work.machine.arm0_status;
+    }
+    //计算每个臂倾角
+
+    int16_t ag[6];
+    double AG[6];
+
+    int16_t Vx[7],Vy[7],V[7],lg[7] = {0, 135, 90, 86, 78, 68, 56};
+    ag[0] = (int16_t)(d->dt_work.machine.arm1_status / 10 ) ;
+    ag[1] = (int16_t)((d->dt_work.machine.arm1_status + d->dt_work.machine.arm2_status) / 10 );
+    ag[2] = (int16_t)((d->dt_work.machine.arm1_status + d->dt_work.machine.arm2_status + d->dt_work.machine.arm3_status) / 10 );
+    ag[3] = (int16_t)((d->dt_work.machine.arm1_status + d->dt_work.machine.arm2_status + d->dt_work.machine.arm3_status + d->dt_work.machine.arm4_status) / 10 );
+    ag[4] = (int16_t)((d->dt_work.machine.arm1_status + d->dt_work.machine.arm2_status + d->dt_work.machine.arm3_status + d->dt_work.machine.arm4_status
+                       + d->dt_work.machine.arm5_status) / 10 );
+    ag[5] = (int16_t)((d->dt_work.machine.arm1_status + d->dt_work.machine.arm2_status + d->dt_work.machine.arm3_status + d->dt_work.machine.arm4_status
+                       + d->dt_work.machine.arm5_status + d->dt_work.machine.arm6_status) / 10 ) ;
+
+    //计算每个臂倾角弧度
+    for(i = 0; i < 6; i++)
+    {
+        AG[i] = ag[i]* 3.14 / 180;
+    }
+
+    Vx[0] = 710;
+    Vy[0] = 530;
+
+    for(i=1; i<7; i++)
+    {
+        Vx[i] = Vx[i-1] + lg[i]*cos(AG[i-1]);
+        Vy[i] = Vy[i-1] - lg[i]*sin(AG[i-1]);
+    }
+
+    lv_img_set_angle(p->arm_01,  -ag[0] * 10);
+
+    lv_obj_set_pos(p->arm_02, Vx[1] , Vy[1]);
+    lv_img_set_angle(p->arm_02,  -ag[1] * 10);
+
+    lv_obj_set_pos(p->arm_03, Vx[2] , Vy[2]);
+    lv_img_set_angle(p->arm_03,  -ag[2] * 10);
+
+    lv_obj_set_pos(p->arm_04, Vx[3] , Vy[3]);
+    lv_img_set_angle(p->arm_04,  -ag[3] * 10);
+
+    lv_obj_set_pos(p->arm_05, Vx[4] , Vy[4]);
+    lv_img_set_angle(p->arm_05,  -ag[4] * 10);
+
+    lv_obj_set_pos(p->arm_06, Vx[5] , Vy[5]);
+    lv_img_set_angle(p->arm_06,  -ag[5] * 10);
+
+    lv_obj_set_pos(p->arm_07, Vx[6] , Vy[6]);
+    lv_img_set_angle(p->arm_07, 900);
+
+    for(i=1; i<7; i++)
+    {
+        Vx[i] = Vx[i-1] + (lg[i]-1)*cos(AG[i-1]);
+        Vy[i] = Vy[i-1] - (lg[i])*sin(AG[i-1]);
+    }
+
+    lv_obj_set_pos(p->arm_p02, Vx[1] , Vy[1]);
+    lv_obj_set_pos(p->arm_p03, Vx[2] , Vy[2]);
+    lv_obj_set_pos(p->arm_p04, Vx[3] , Vy[3]);
+    lv_obj_set_pos(p->arm_p05, Vx[4] , Vy[4]);
+    lv_obj_set_pos(p->arm_p06, Vx[5] , Vy[5]);
+    lv_obj_set_pos(p->arm_p07, Vx[6] , Vy[6]);
+
+}

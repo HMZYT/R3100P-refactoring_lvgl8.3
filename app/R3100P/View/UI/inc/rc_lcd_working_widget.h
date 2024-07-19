@@ -8,6 +8,7 @@ extern "C" {
 #include "lvgl/lvgl.h"
 
 lv_obj_t * working_widget_init();
+void * working_widget_refresh(void *data);
 
 #ifdef __cplusplus
 } /*extern "C"*/

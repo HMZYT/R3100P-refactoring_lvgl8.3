@@ -8,24 +8,28 @@
 #include "../../User/inc/UiRun.h"
 #include "../../theme/inc/theme_R1100P_white.h"
 
-PageManage::PageManage(PAGE* home_page, lv_obj_t* (*init)(lv_obj_t* page), void* (*refresh)(lv_obj_t* page, void* data))
-{
-    home_page->pageID = 0;
-    home_page->init = init;
-    home_page->refresh = refresh;
-    curr_page = NULL;
-    pageList.push_back(home_page);
-}
+PageManage::PageManage()
+= default;
 
 PageManage::~PageManage()
-{
+= default;
 
+PageManage *PageManage::GetInstance()
+{
+    static PageManage* pageManger = nullptr;
+    if( !pageManger )
+    {
+        pageManger =  new PageManage();
+    }
+
+    return pageManger;
 }
 
-void PageManage::page_manage_add_page(PAGE* page, int id, lv_obj_t* (*init)(lv_obj_t* page))
+void PageManage::page_manage_add_page(PAGE* page, int id, lv_obj_t* (*init)(lv_obj_t* page), void* (*refresh)(void* data))
 {
     page->pageID = id;
     page->init = init;
+    page->refresh = refresh;
     pageList.push_back(page);
 }
 
@@ -54,11 +58,16 @@ void PageManage::page_manage_switch_page(int id, void* data)
         curr_page = pageListInit[id];
     }
 
+    if (data == NULL)
+    {
+        return;
+    }
+
     for (auto temp : pageList)
     {
         if (id < page_end_flag)
         {
-            temp->refresh(pageListInit[id], data);
+            temp->refresh(data);
         }
     }
 }

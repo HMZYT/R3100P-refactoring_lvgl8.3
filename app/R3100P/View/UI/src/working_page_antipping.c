@@ -12,10 +12,10 @@ static lv_style_t style_rk_bar;
 static lv_style_t style_bubble;
 static lv_style_t style_line_red;
 static lv_style_t style_line_green;
-
+static working_page_antipping_t *p;
 lv_obj_t* working_page_antipping_init(lv_obj_t *page)
 {
-    working_page_antipping_t *p = lv_mem_alloc(sizeof (working_page_antipping_t));
+    p = lv_mem_alloc(sizeof (working_page_antipping_t));
     uint16_t parent_width, parent_height;
 
     parent_width = lv_disp_get_hor_res(NULL);
@@ -383,768 +383,750 @@ lv_obj_t* working_page_antipping_init(lv_obj_t *page)
     return obj;
 }
 
-//static void antipping_observer_list_cb(lv_observer_t *observer, lv_subject_t *subject)
-//{
-//    lv_obj_t *page_rc = lv_observer_get_target_obj(observer);
-//    working_page_antipping_t *p = (working_page_antipping_t *) observer->user_data;
-//    static bool _start = false;
-//    char temp[64];
-//    temp_value_t support_mode;
-//    temp_value_t collapse_flag;
-//    temp_value_t alarm_flag;
-//    temp_value_t limit_flag;
-//    temp_value_t leg_left_up_level;
-//    temp_value_t leg_right_up_level;
-//    temp_value_t leg_left_down_level;
-//    temp_value_t leg_right_down_level;
-//    temp_value_t leg_left_up;
-//    temp_value_t leg_left_down;
-//    temp_value_t leg_right_up;
-//    temp_value_t leg_right_down;
-//    temp_value_t leg_left_up_collapse;
-//    temp_value_t leg_left_down_collapse;
-//    temp_value_t leg_right_up_collapse;
-//    temp_value_t leg_right_down_collapse;
-//    temp_value_t up_dis;
-//    temp_value_t down_dis;
-//    temp_value_t left_dis;
-//    temp_value_t right_dis;
-//    temp_value_t danger_edge;
-//    temp_value_t arm0_status;
-//    temp_value_t safe_k;
-//    support_mode =  lv_subject_get_int_from_type(subject, antipping_support_mode, 0, pageid_antipping);
-//
-//#pragma region 1.支撑模式
-//    if (support_mode.different_flag)
-//    {
-//        if (support_mode.current_value == 1)
-//        { //全支撑模式
-//            lv_label_set_text(p->mode_label, "全支撑");
-//            lv_img_set_src( p->mode_img, &bus_state1);
-//        }
-//        else if (support_mode.current_value == 2)
-//        { //左支撑模式
-//            lv_label_set_text(p->mode_label, "左支撑");
-//            lv_img_set_src( p->mode_img, &bus_state7);
-//        }
-//        else if (support_mode.current_value == 3)
-//        { //右支撑模式
-//            lv_label_set_text(p->mode_label, "右支撑");
-//            lv_img_set_src( p->mode_img, &bus_state5);
-//        }
-//        else if (support_mode.current_value == 4)
-//        { //前支撑模式
-//            lv_label_set_text(p->mode_label, "前支撑");
-//            lv_img_set_src( p->mode_img, &bus_state3);
-//        }
-//        else if (support_mode.current_value == 5)
-//        { //小支撑模式???
-//            lv_label_set_text(p->mode_label, "小支撑");
-//            lv_img_set_src( p->mode_img, &bus_state2);
-//        }
-//        else if (support_mode.current_value == 6)
-//        {
-//            lv_label_set_text(p->mode_label, "一级腿支撑");
-//            lv_img_set_src( p->mode_img, &bus_state2);
-//        }
-//        else if (support_mode.current_value == 7)
-//        {
-//            lv_label_set_text(p->mode_label, "左前支撑");
-//            //补图lv_img_set_src( p->mode_img, &bus_state8);
-//        }
-//        else if (support_mode.current_value == 8)
-//        {
-//            lv_label_set_text(p->mode_label, "右前支撑");
-//            lv_img_set_src( p->mode_img, &bus_state6);
-//        }
-//        else if (support_mode.current_value == 9)
-//        {
-//            lv_label_set_text(p->mode_label, "两级腿支撑");
-//            lv_img_set_src( p->mode_img, &bus_state2);
-//        }
-//        else if (support_mode.current_value == 10)
-//        {
-//            lv_label_set_text(p->mode_label, "任意支撑");
-//            lv_img_set_src( p->mode_img, &bus_state4);
-//        }
-//        else if (support_mode.current_value == 100)
-//        {
-//            lv_label_set_text(p->mode_label, "RPC");
-//            //补图lv_img_set_src( p->mode_img, &bus_state9);
-//        }
-//        else
-//        { //无支撑模式
-//            lv_label_set_text(p->mode_label, "无支撑");
-//            lv_img_set_src( p->mode_img, &bus_state0);
-//        }
-//    }
-//#pragma endregion 1.支撑模式
-//
-//#pragma region 2.支撑安全预警提示
-//    collapse_flag =  lv_subject_get_int_from_type(subject, antipping_collapse_flag, 0, pageid_antipping);
-//    alarm_flag = lv_subject_get_int_from_type(subject, antipping_alarm_flag, 0, pageid_antipping);
-//    limit_flag = lv_subject_get_int_from_type(subject, antipping_limit_flag, 0, pageid_antipping);
-//    if(collapse_flag.current_value == 1||support_mode.current_value == 10)
-//    {
-//        lv_obj_clear_flag(p->warning_title, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->warning_content1, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->warning_content2, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->warning1_cycle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->warning2_cycle, LV_OBJ_FLAG_HIDDEN);
-//        if (alarm_flag.current_value == 1)
-//        {
-//            lv_obj_set_style_bg_color(p->warning1_cycle,lv_color_make(0x00, 0xff, 0x00),0);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_bg_color(p->warning1_cycle,lv_color_make(0xde, 0xde, 0xde),0);
-//        }
-//        if (limit_flag.current_value == 1)
-//        {
-//            lv_obj_set_style_bg_color(p->warning2_cycle,lv_color_make(0x00, 0xff, 0x00),0);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_bg_color(p->warning2_cycle,lv_color_make(0xde, 0xde, 0xde),0);
-//        }
-//
-//    }
-//    else
-//    {
-//        lv_obj_add_flag(p->warning_title, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning_content1, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning_content2, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning1_cycle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning2_cycle, LV_OBJ_FLAG_HIDDEN);
-//    }
-//#pragma endregion 2.支撑安全预警提示
-//
-//#pragma region 3.支腿塌陷级别
-//    leg_left_up_level = lv_subject_get_int_from_type(subject, antipping_leg_left_up_level, 0, pageid_antipping);
-//    leg_right_up_level = lv_subject_get_int_from_type(subject, antipping_leg_right_up_level, 0, pageid_antipping);
-//    leg_left_down_level = lv_subject_get_int_from_type(subject, antipping_leg_left_down_level, 0, pageid_antipping);
-//    leg_right_down_level = lv_subject_get_int_from_type(subject, antipping_leg_right_down_level, 0, pageid_antipping);
-//    if (collapse_flag.current_value)
-//    {
-//        for(int i = 0; i < 4; i ++)
-//        {
-//            lv_obj_clear_flag(p->danger_level_icon[i], LV_OBJ_FLAG_HIDDEN);
-//        }
-//        for(int i = 0; i < 3; i ++)
-//        {
-//            lv_obj_clear_flag(p->danger_level_1[i], LV_OBJ_FLAG_HIDDEN);
-//            lv_obj_clear_flag(p->danger_leve1_2[i], LV_OBJ_FLAG_HIDDEN);
-//            lv_obj_clear_flag(p->danger_leve1_3[i], LV_OBJ_FLAG_HIDDEN);
-//            lv_obj_clear_flag(p->danger_leve1_4[i], LV_OBJ_FLAG_HIDDEN);
-//        }
-//        //左上
-//        if (leg_left_up_level.current_value >= -1)
-//        {
-//            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[0], &danger1);
-//        }
-//        else if (leg_left_up_level.current_value == -2 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[0], &danger2);
-//        }
-//        else if (leg_left_up_level.current_value == -3 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0x00, 0x00),0);
-//            lv_img_set_src(p->danger_level_icon[0], &danger3);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[0], &danger1);
-//
-//        }
-//        //右上
-//        if (leg_right_up_level.current_value >= -1 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[1], &danger1);
-//
-//        }
-//        else if (leg_right_up_level.current_value == -2 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[1], &danger2);
-//        }
-//        else if (leg_right_up_level.current_value == -3 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0x00, 0x00),0);
-//            lv_img_set_src(p->danger_level_icon[1], &danger3);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[1], &danger1);
-//        }
-//
-//        //左下
-//        if (leg_left_down_level.current_value >= -1 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[2], &danger1);
-//        }
-//        else if (leg_left_down_level.current_value == -2 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[2], &danger2);
-//        }
-//        else if (leg_left_down_level.current_value == -3 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0x00, 0x00),0);
-//            lv_img_set_src(p->danger_level_icon[2], &danger3);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[2], &danger1);
-//        }
-//
-//        //右下
-//        if (leg_right_down_level.current_value == 0 || leg_right_down_level.current_value == -1 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[3], &danger1);
-//        }
-//        else if (leg_right_down_level.current_value == -2 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[3], &danger2);
-//        }
-//        else if (leg_right_down_level.current_value == -3 )
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0x00, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0x00),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0x00, 0x00),0);
-//            lv_img_set_src(p->danger_level_icon[3], &danger3);
-//        }
-//        else
-//        {
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0xff, 0xff),0);
-//            lv_img_set_src(p->danger_level_icon[3], &danger1);
-//        }
-//    }
-//    else
-//    {
-//        for(int i = 0; i < 4; i ++)
-//        {
-//            lv_obj_add_flag(p->danger_level_icon[i], LV_OBJ_FLAG_HIDDEN);
-//        }
-//        for(int i = 0; i < 3; i ++)
-//        {
-//            lv_obj_add_flag(p->danger_level_1[i], LV_OBJ_FLAG_HIDDEN);
-//            lv_obj_add_flag(p->danger_leve1_2[i], LV_OBJ_FLAG_HIDDEN);
-//            lv_obj_add_flag(p->danger_leve1_3[i], LV_OBJ_FLAG_HIDDEN);
-//            lv_obj_add_flag(p->danger_leve1_4[i], LV_OBJ_FLAG_HIDDEN);
-//        }
-//    }
-//#pragma endregion 3.支腿塌陷级别
-//
-//#pragma region 任意支撑
-//    arm0_status =  lv_subject_get_int_from_type(subject, antipping_arm0_status, 0, pageid_antipping);
-//    if(support_mode.current_value == 10) //任意支撑
-//    {
-//        lv_obj_clear_flag(p->leg_length[0], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_length[1], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_length[2], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_length[3], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_1, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_2, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_3, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->leg_4, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->bus_cycle_any, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->line_cycle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->any_state_busbg, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->coord_bg, LV_OBJ_FLAG_HIDDEN);
-//
-//        lv_obj_add_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->bus_state_bg, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->label_angle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
-//
-//        leg_left_up = lv_subject_get_int_from_type(subject, antipping_leg_left_up, 0, pageid_antipping);
-//        leg_right_up = lv_subject_get_int_from_type(subject, antipping_leg_right_up, 0,pageid_antipping);
-//        leg_left_down = lv_subject_get_int_from_type(subject, antipping_leg_left_down, 0,pageid_antipping);
-//        leg_right_down = lv_subject_get_int_from_type(subject, antipping_leg_right_down, 0,pageid_antipping);
-//        up_dis = lv_subject_get_int_from_type(subject, antipping_up_dis, 0,pageid_antipping);
-//        right_dis = lv_subject_get_int_from_type(subject, antipping_right_dis, 0,pageid_antipping);
-//        down_dis = lv_subject_get_int_from_type(subject, antipping_down_dis, 0,pageid_antipping);
-//        left_dis = lv_subject_get_int_from_type(subject, antipping_left_dis, 0,pageid_antipping);
-//        danger_edge = lv_subject_get_int_from_type(subject, antipping_danger_edge, 0,pageid_antipping);
-//        //支腿开度,前2腿伸缩，固定46度,后两腿摆动,最大50.4 开度值固定显示
-//        int xx,yy;
-//        if(leg_left_up.different_flag)
-//        {
-//            xx = 20 - 20 * leg_left_up.current_value / 100.0;
-//            yy = 20 - 20 * leg_left_up.current_value / 100.0;
-//            lv_obj_set_pos(p->leg_1, 328 + xx  , 135 + yy);
-//            lv_label_set_text_fmt( p->leg_length[0], "%d%%", leg_left_up.current_value);
-//        }
-//
-//        if(leg_right_up.different_flag)
-//        {
-//            xx = 20 - 20 * leg_right_up.current_value / 100.0;
-//            yy = 20 - 20 * leg_right_up.current_value / 100.0;
-//            lv_obj_set_pos(p->leg_2, 364 -xx, 135 + yy  );
-//            lv_label_set_text_fmt( p->leg_length[1], "%d%%", leg_right_up.current_value);
-//        }
-//
-//        if(leg_right_down.different_flag)
-//        {
-//            lv_img_set_angle(p->leg_3, 1800 - 504 * leg_right_down.current_value / 100.0);
-//            lv_label_set_text_fmt( p->leg_length[2], "%d%%", leg_right_down.current_value);
-//        }
-//
-//        if(leg_left_down.different_flag)
-//        {
-//            xx = 1800 - 504 * leg_left_down.current_value / 100.0;
-//            lv_img_set_angle(p->leg_4, 1800 + 504 * leg_left_down.current_value / 100.0);
-//            lv_label_set_text_fmt( p->leg_length[3], "%d%%", leg_left_down.current_value );
-//        }
-//
-//        //支腿变红
-//        if(leg_left_up_collapse.different_flag)
-//        {
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_img_set_src(p->leg_1, &leg_short_red);
-//            }else
-//            {
-//                lv_img_set_src(p->leg_1, &leg_short_black);
-//            }
-//        }
-//
-//        if(leg_right_up_collapse.different_flag)
-//        {
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_img_set_src(p->leg_2, &leg_short_red);
-//            }else
-//            {
-//                lv_img_set_src(p->leg_2, &leg_short_black);
-//            }
-//        }
-//
-//        if(leg_right_down_collapse.different_flag)
-//        {
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_img_set_src(p->leg_3, &leg_short_red);
-//            }else
-//            {
-//                lv_img_set_src(p->leg_3, &leg_short_black);
-//            }
-//        }
-//
-//        if(leg_left_down_collapse.different_flag)
-//        {
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_img_set_src(p->leg_4, &leg_short_red);
-//            }else
-//            {
-//                lv_img_set_src(p->leg_4, &leg_short_black);
-//            }
-//        }
-//        //距离
-//        if(up_dis.different_flag)
-//        {
-//            sprintf(temp, "%.1fm", up_dis.current_value / 10.0);
-//            lv_label_set_text(p->leg_1_level_label, temp);
-//            if (up_dis.current_value == 0)
-//            {
-//                lv_obj_add_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }else
-//            {
-//                lv_obj_clear_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//
-//        if(right_dis.different_flag)
-//        {
-//            sprintf(temp, "%.1fm", right_dis.current_value / 10.0);
-//            lv_label_set_text(p->leg_2_level_label, temp);
-//            if (right_dis.current_value == 0)
-//            {
-//                lv_obj_add_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }else
-//            {
-//                lv_obj_clear_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//
-//        if(down_dis.different_flag)
-//        {
-//            sprintf(temp, "%.1fm", down_dis.current_value / 10.0);
-//            lv_label_set_text(p->leg_3_level_label, temp);
-//            if (down_dis.current_value == 0)
-//            {
-//                lv_obj_add_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }else
-//            {
-//                lv_obj_clear_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//
-//        if(left_dis.different_flag)
-//        {
-//            sprintf(temp, "%.1fm", left_dis.current_value / 10.0);
-//            lv_label_set_text(p->leg_4_level_label, temp);
-//            if (left_dis.current_value == 0)
-//            {
-//                lv_obj_add_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }else
-//            {
-//                lv_obj_clear_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//
-//        //感叹号显示
-//        if(danger_edge.different_flag)
-//        {
-//            if (danger_edge.current_value == 0 || danger_edge.current_value > 4)
-//            {
-//                lv_obj_add_flag(p->warning_icon[0], LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_add_flag(p->warning_icon[1], LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_add_flag(p->warning_icon[2], LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_add_flag(p->warning_icon[3], LV_OBJ_FLAG_HIDDEN);
-//            }
-//            else
-//            {
-//                for(int i =0; i <4 ; i++)
-//                {
-//                    if (i == danger_edge.current_value -1)
-//                    {
-//                        lv_obj_clear_flag(p->warning_icon[i], LV_OBJ_FLAG_HIDDEN);
-//                    }
-//                    else
-//                    {
-//                        lv_obj_add_flag(p->warning_icon[i], LV_OBJ_FLAG_HIDDEN);
-//                    }
-//                }
-//            }
-//        }
-//
-////        if (anystate_flag)
-////        {
-////            lv_line_set_points(p->line_cycle, line_points, 73);
-////        }
-////        //回转
-////        lv_img_set_angle(p->bus_cycle_any, arm0_status);
-//    }
-//    else
-//    {
-//        lv_obj_add_flag(p->warning_icon[0], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning_icon[1], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning_icon[2], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->warning_icon[3], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_length[0], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_length[1], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_length[2], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_length[3], LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_1, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_2, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_3, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->leg_4, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->bus_cycle_any, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->line_cycle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->any_state_busbg, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->coord_bg, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
-//
-//        lv_obj_clear_flag(p->bus_state_bg, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->label_angle, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
-//        if (support_mode.current_value == 1)
-//        { //全支撑模式
-//            lv_img_set_src( p->bus_state_bg, &bus_state3 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 2)
-//        { //左支撑模式
-//            lv_img_set_src( p->bus_state_bg, &bus_state7 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 3)
-//        { //右支撑模式
-//            lv_img_set_src( p->bus_state_bg, &bus_state4 );
-//
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 4)
-//        { //前支撑模式
-//            lv_img_set_src( p->bus_state_bg, &bus_state5 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 6)
-//        {//一级腿
-//            lv_img_set_src( p->bus_state_bg, &bus_state6 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 7)
-//        {//左前
-//            lv_img_set_src( p->bus_state_bg, &bus_state2 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 8)
-//        {//右前
-//            lv_img_set_src( p->bus_state_bg, &bus_state1 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 9)
-//        {//两级腿
-//            lv_img_set_src( p->bus_state_bg, &bus_state6 );
-//
-//            if(leg_left_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_left_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_up_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(leg_right_down_collapse.current_value == 1)
-//            {
-//                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
-//            }
-//        }
-//        else if (support_mode.current_value == 0)
-//        { //无支撑模式
-//            lv_img_set_src( p->bus_state_bg, &bus_state0 );
-//        }
-//
-//        //回转
-//        lv_img_set_angle(p->bus_cycle, arm0_status.current_value);
-//    }
-//#pragma endregion 任意支撑
-//
-//    safe_k =  lv_subject_get_int_from_type(subject, antipping_safe_k, 0, pageid_antipping);
-//    //安全系数
-//    if(support_mode.current_value == 10)
-//    {
-//        lv_obj_clear_flag(p->danger_mode_icon, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_clear_flag(p->safety_bg, LV_OBJ_FLAG_HIDDEN);
-//        if(safe_k.different_flag)
-//        {
-//            if(safe_k.current_value > 200)
-//            {
-//                safe_k.current_value = 200;
-//            }
-//            if(safe_k.current_value == 0)
-//            {
-//                lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_add_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_add_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
-//            }
-//            if(safe_k.current_value >= 100 && safe_k.current_value <= 110)
-//            {
-//                lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_add_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_img_set_src(p->danger_mode_icon, &mode_icon3);
-//
-//                lv_obj_set_size(p->red_obj, 50, 300*(safe_k.current_value - 100)/100.0 );
-//                lv_obj_set_pos(p->red_obj, 670, 80 + 195 + 75 + (30 - 300*(safe_k.current_value - 100)/100.0)) ;
-//            }
-//            else if(safe_k.current_value > 110 && safe_k.current_value <= 135)
-//            {
-//                lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_clear_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_img_set_src(p->danger_mode_icon, &mode_icon2);
-//
-//                lv_obj_set_size(p->red_obj, 50, 30);
-//                lv_obj_set_pos(p->red_obj, 670, 80 + 195 + 75);
-//
-//                lv_obj_set_size(p->yellow_obj, 50, 300*(safe_k.current_value - 110)/100.0 );
-//                lv_obj_set_pos(p->yellow_obj, 670, 80 + 195 + (75 - 300*(safe_k.current_value - 110)/100.0)) ;
-//            }
-//            else if(safe_k.current_value > 135 && safe_k.current_value <= 200)
-//            {
-//                lv_obj_clear_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_clear_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
-//                lv_img_set_src(p->danger_mode_icon, &mode_icon1);
-//
-//                lv_obj_set_size(p->red_obj, 50, 30);
-//                lv_obj_set_pos(p->red_obj, 670, 80 + 195 + 75);
-//
-//                lv_obj_set_size(p->yellow_obj, 50, 75);
-//                lv_obj_set_pos(p->yellow_obj, 670, 80 + 195);
-//
-//                lv_obj_set_size(p->green_obj, 50, 300*(safe_k.current_value - 135)/100.0);
-//                lv_obj_set_pos(p->green_obj, 670, 80 + (195 - 300*(safe_k.current_value - 135)/100.0));
-//            }
-//        }
-//    }
-//    else
-//    {
-//        lv_obj_add_flag(p->danger_mode_icon, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->safety_bg, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
-//        lv_obj_add_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
-//    }
-//}
+void * anti_refresh(void *data) {
+    static dt_machine_status_t last;
+    static dt_rc_status_t last_rc;
+    char temp[64];
+    dt_ui_t *d = (dt_ui_t *)data;
+    int i=0;
+    //-----------------------------------------------------------------
+    // 1. 支撑模式
+    //-----------------------------------------------------------------
+    if ( last.support_mode != d->dt_work.machine.support_mode )
+    {
+        if (d->dt_work.machine.support_mode == 1)
+        { //全支撑模式
+            lv_label_set_text(p->mode_label, "全支撑");
+            lv_img_set_src( p->mode_img, &four_mode );
+        }
+        else if (d->dt_work.machine.support_mode == 2)
+        { //左支撑模式
+            lv_label_set_text(p->mode_label, "左支撑");
+            lv_img_set_src( p->mode_img, &mode_13 );
+        }
+        else if (d->dt_work.machine.support_mode == 3)
+        { //右支撑模式
+            lv_label_set_text(p->mode_label, "右支撑");
+            lv_img_set_src( p->mode_img, &mode_24 );
+        }
+        else if (d->dt_work.machine.support_mode == 4)
+        { //前支撑模式
+            lv_label_set_text(p->mode_label, "前支撑");
+            lv_img_set_src( p->mode_img, &mode_12 );
+        }
+        else if (d->dt_work.machine.support_mode == 5)
+        { //小支撑模式???
+            lv_label_set_text(p->mode_label, "小支撑");
+            lv_img_set_src( p->mode_img, &second_mode );
+        }
+        else if (d->dt_work.machine.support_mode == 6)
+        {
+            lv_label_set_text(p->mode_label, "一级腿支撑");
+            lv_img_set_src( p->mode_img, &second_mode );
+        }
+        else if (d->dt_work.machine.support_mode == 7)
+        {
+            lv_label_set_text(p->mode_label, "左前支撑");
+            lv_img_set_src( p->mode_img, &mode_123);
+        }
+        else if (d->dt_work.machine.support_mode == 8)
+        {
+            lv_label_set_text(p->mode_label, "右前支撑");
+            lv_img_set_src( p->mode_img, &mode_124 );
+        }
+        else if (d->dt_work.machine.support_mode == 9)
+        {
+            lv_label_set_text(p->mode_label, "两级腿支撑");
+            lv_img_set_src( p->mode_img, &second_mode );
+        }
+        else if (d->dt_work.machine.support_mode == 10)
+        {
+            lv_label_set_text(p->mode_label, "任意支撑");
+            lv_img_set_src( p->mode_img, &any_mode );
+        }
+        else if (d->dt_work.machine.support_mode == 100)
+        {
+            lv_label_set_text(p->mode_label, "RPC");
+            lv_img_set_src( p->mode_img, &RPC);
+        }
+        else
+        { //无支撑模式
+            lv_label_set_text(p->mode_label, "无支撑");
+            lv_img_set_src( p->mode_img, &no_mode);
+        }
+        last.support_mode = d->dt_work.machine.support_mode;
+    }
 
+    //-----------------------------------------------------------------
+    // 2. 支撑安全预警提示
+    //-----------------------------------------------------------------
+    if(d->dt_work.machine.collapse_flag == 1|| d->dt_work.machine.support_mode == 10)
+    {
+        lv_obj_clear_flag(p->warning_title, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->warning_content1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->warning_content2, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->warning1_cycle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->warning2_cycle, LV_OBJ_FLAG_HIDDEN);
+        if (d->dt_work.machine.alarm_flag == 1)
+        {
+            lv_obj_set_style_bg_color(p->warning1_cycle,lv_color_make(0x00, 0xff, 0x00),0);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(p->warning1_cycle,lv_color_make(0xde, 0xde, 0xde),0);
+        }
+        if (d->dt_work.machine.limit_flag  == 1)
+        {
+            lv_obj_set_style_bg_color(p->warning2_cycle,lv_color_make(0x00, 0xff, 0x00),0);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(p->warning2_cycle,lv_color_make(0xde, 0xde, 0xde),0);
+        }
+
+    }
+    else
+    {
+        lv_obj_add_flag(p->warning_title, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning_content1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning_content2, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning1_cycle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning2_cycle, LV_OBJ_FLAG_HIDDEN);
+    }
+    //-----------------------------------------------------------------
+    // 3. 支腿塌陷级别
+    //-----------------------------------------------------------------
+    if (d->dt_work.machine.collapse_flag == true)
+    {
+        for(i = 0; i < 4; i ++)
+        {
+            lv_obj_clear_flag(p->danger_level_icon[i], LV_OBJ_FLAG_HIDDEN);
+        }
+        for(i = 0; i < 3; i ++)
+        {
+            lv_obj_clear_flag(p->danger_level_1[i], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(p->danger_leve1_2[i], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(p->danger_leve1_3[i], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(p->danger_leve1_4[i], LV_OBJ_FLAG_HIDDEN);
+        }
+        //左上
+        if (d->dt_work.machine.leg_left_up_level >= -1)
+        {
+            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[0], &danger1);
+        }
+        else if (d->dt_work.machine.leg_left_up_level == -2 )
+        {
+
+            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[0], &danger2);
+        }
+        else if (d->dt_work.machine.leg_left_up_level == -3 )
+        {
+            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0x00, 0x00),0);
+            lv_img_set_src(p->danger_level_icon[0], &danger3);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(p->danger_level_1[0], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_level_1[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[0], &danger1);
+
+        }
+        //右上
+        if (d->dt_work.machine.leg_right_up_level >= -1 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[1], &danger1);
+
+        }
+        else if (d->dt_work.machine.leg_right_up_level == -2 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[1], &danger2);
+        }
+        else if (d->dt_work.machine.leg_right_up_level == -3 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0x00, 0x00),0);
+            lv_img_set_src(p->danger_level_icon[1], &danger3);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_2[0], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_2[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[1], &danger1);
+        }
+
+        //左下
+        if (d->dt_work.machine.leg_left_down_level >= -1 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[2], &danger1);
+        }
+        else if (d->dt_work.machine.leg_left_down_level == -2 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[2], &danger2);
+        }
+        else if (d->dt_work.machine.leg_left_down_level == -3 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0x00, 0x00),0);
+            lv_img_set_src(p->danger_level_icon[2], &danger3);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_3[0], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_3[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[2], &danger1);
+        }
+
+        //右下
+        if (d->dt_work.machine.leg_right_down_level == 0 || d->dt_work.machine.leg_right_down_level == -1 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[3], &danger1);
+        }
+        else if (d->dt_work.machine.leg_right_down_level == -2 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[3], &danger2);
+        }
+        else if (d->dt_work.machine.leg_right_down_level == -3 )
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0x00, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0x00),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0x00, 0x00),0);
+            lv_img_set_src(p->danger_level_icon[3], &danger3);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(p->danger_leve1_4[0], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[1], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_obj_set_style_bg_color(p->danger_leve1_4[2], lv_color_make(0xff, 0xff, 0xff),0);
+            lv_img_set_src(p->danger_level_icon[3], &danger1);
+        }
+    }
+    else
+    {
+        for(i = 0; i < 4; i ++)
+        {
+            lv_obj_add_flag(p->danger_level_icon[i], LV_OBJ_FLAG_HIDDEN);
+        }
+        for(i = 0; i < 3; i ++)
+        {
+            lv_obj_add_flag(p->danger_level_1[i], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(p->danger_leve1_2[i], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(p->danger_leve1_3[i], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(p->danger_leve1_4[i], LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+    if(d->dt_work.machine.support_mode == 10) //任意支撑
+    {
+//						lv_obj_clear_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
+//						lv_obj_clear_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
+//						lv_obj_clear_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
+//						lv_obj_clear_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_length[0], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_length[1], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_length[2], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_length[3], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_2, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_3, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->leg_4, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->bus_cycle_any, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->line_cycle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->any_state_busbg, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->coord_bg, LV_OBJ_FLAG_HIDDEN);
+
+        lv_obj_add_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->bus_state_bg, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->label_angle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
+
+        //支腿开度,前2腿伸缩，固定46度,后两腿摆动,最大50.4 开度值固定显示
+        int xx,yy;
+        if(last.leg_left_up != d->dt_work.machine.leg_left_up)
+        {
+            xx = 20 - 20*d->dt_work.machine.leg_left_up / 100.0;
+            yy = 20 - 20*d->dt_work.machine.leg_left_up / 100.0;
+            lv_obj_set_pos(p->leg_1, 590 + xx  , 220 + yy);
+            lv_label_set_text_fmt( p->leg_length[0], "%d%%", d->dt_work.machine.leg_left_up );
+            last.leg_left_up = d->dt_work.machine.leg_left_up;
+        }
+
+        if(last.leg_right_up != d->dt_work.machine.leg_right_up)
+        {
+            xx = 20 - 20*d->dt_work.machine.leg_right_up / 100.0;
+            yy = 20 - 20*d->dt_work.machine.leg_right_up / 100.0;
+            lv_obj_set_pos(p->leg_2, 593 -xx, 200 + yy  );
+            lv_label_set_text_fmt( p->leg_length[1], "%d%%", d->dt_work.machine.leg_right_up );
+            last.leg_right_up = d->dt_work.machine.leg_right_up;
+        }
+
+        if(last.leg_right_down != d->dt_work.machine.leg_right_down)
+        {
+            lv_img_set_angle(p->leg_3, 1800 - 504 * d->dt_work.machine.leg_right_down / 100.0);
+            lv_label_set_text_fmt( p->leg_length[2], "%d%%", d->dt_work.machine.leg_right_down );
+            last.leg_right_down = d->dt_work.machine.leg_right_down;
+        }
+
+        if(last.leg_left_down != d->dt_work.machine.leg_left_down)
+        {
+            xx = 1800 - 504 * d->dt_work.machine.leg_left_down / 100.0;
+            lv_img_set_angle(p->leg_4, 1800 + 504 * d->dt_work.machine.leg_left_down / 100.0);
+            lv_label_set_text_fmt( p->leg_length[3], "%d%%", d->dt_work.machine.leg_left_down );
+            last.leg_left_down = d->dt_work.machine.leg_left_down;
+        }
+
+        //支腿变红
+        if( last.leg_left_up_collapse != d->dt_work.machine.leg_left_up_collapse )
+        {
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_img_set_src(p->leg_1, &leg_short_red);
+            }else
+            {
+                lv_img_set_src(p->leg_1, &leg_short_black);
+            }
+            last.leg_left_up_collapse = d->dt_work.machine.leg_left_up_collapse;
+        }
+
+        if( last.leg_right_up_collapse != d->dt_work.machine.leg_right_up_collapse )
+        {
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_img_set_src(p->leg_2, &leg_short_red);
+            }else
+            {
+                lv_img_set_src(p->leg_2, &leg_short_black);
+            }
+            last.leg_right_up_collapse = d->dt_work.machine.leg_right_up_collapse;
+        }
+
+        if( last.leg_right_down_collapse != d->dt_work.machine.leg_right_down_collapse )
+        {
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_img_set_src(p->leg_3, &leg_short_red);
+            }else
+            {
+                lv_img_set_src(p->leg_3, &leg_short_black);
+            }
+            last.leg_right_down_collapse = d->dt_work.machine.leg_right_down_collapse;
+        }
+
+        if( last.leg_left_down_collapse != d->dt_work.machine.leg_left_down_collapse )
+        {
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_img_set_src(p->leg_4, &leg_short_red);
+            }else
+            {
+                lv_img_set_src(p->leg_4, &leg_short_black);
+            }
+            last.leg_left_down_collapse = d->dt_work.machine.leg_left_down_collapse;
+        }
+        //距离
+        if(last.up_dis != d->dt_work.machine.up_dis)
+        {
+            sprintf(temp, "%.1fm", d->dt_work.machine.up_dis / 10.0);
+            lv_label_set_text(p->leg_1_level_label, temp);
+            if (d->dt_work.machine.up_dis == 0)
+            {
+                lv_obj_add_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
+            }else
+            {
+                lv_obj_clear_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
+            }
+            last.up_dis = d->dt_work.machine.up_dis;
+        }
+
+        if(last.right_dis != d->dt_work.machine.right_dis)
+        {
+            sprintf(temp, "%.1fm", d->dt_work.machine.right_dis / 10.0);
+            lv_label_set_text(p->leg_2_level_label, temp);
+            if (d->dt_work.machine.right_dis == 0)
+            {
+                lv_obj_add_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
+            }else
+            {
+                lv_obj_clear_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
+            }
+            last.right_dis = d->dt_work.machine.right_dis;
+        }
+
+        if(last.down_dis != d->dt_work.machine.down_dis)
+        {
+            sprintf(temp, "%.1fm", d->dt_work.machine.down_dis / 10.0);
+            lv_label_set_text(p->leg_3_level_label, temp);
+            if (d->dt_work.machine.down_dis == 0)
+            {
+                lv_obj_add_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
+            }else
+            {
+                lv_obj_clear_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
+            }
+            last.down_dis = d->dt_work.machine.down_dis;
+        }
+
+        if(last.left_dis != d->dt_work.machine.left_dis)
+        {
+            sprintf(temp, "%.1fm", d->dt_work.machine.left_dis / 10.0);
+            lv_label_set_text(p->leg_4_level_label, temp);
+            if (d->dt_work.machine.left_dis == 0)
+            {
+                lv_obj_add_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
+            }else
+            {
+                lv_obj_clear_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
+            }
+            last.left_dis = d->dt_work.machine.left_dis;
+        }
+
+
+        //感叹号显示
+        if(last.danger_edge != d->dt_work.machine.danger_edge)
+        {
+            if (d->dt_work.machine.danger_edge == 0 || d->dt_work.machine.danger_edge > 4)
+            {
+                lv_obj_add_flag(p->warning_icon[0], LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(p->warning_icon[1], LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(p->warning_icon[2], LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(p->warning_icon[3], LV_OBJ_FLAG_HIDDEN);
+            }
+            else
+            {
+                for(i =0; i <4 ; i++)
+                {
+                    if (i ==  d->dt_work.machine.danger_edge -1)
+                    {
+                        lv_obj_clear_flag(p->warning_icon[i], LV_OBJ_FLAG_HIDDEN);
+                    }
+                    else
+                    {
+                        lv_obj_add_flag(p->warning_icon[i], LV_OBJ_FLAG_HIDDEN);
+                    }
+                }
+            }
+            last.danger_edge = d->dt_work.machine.danger_edge;
+        }
+        // //画圈圈
+        // if (anystate_flag)
+        // {
+        // 		lv_line_set_points(p->line_cycle, line_points, 73);
+        // }
+        //回转
+        lv_img_set_angle(p->bus_cycle_any, d->dt_work.machine.arm0_status);
+    }
+    else
+    {
+        lv_obj_add_flag(p->warning_icon[0], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning_icon[1], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning_icon[2], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->warning_icon[3], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_1_level_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_2_level_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_3_level_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_4_level_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_length[0], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_length[1], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_length[2], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_length[3], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_2, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_3, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->leg_4, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->bus_cycle_any, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->line_cycle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->any_state_busbg, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->coord_bg, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
+
+        lv_obj_clear_flag(p->bus_state_bg, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->label_angle, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->bus_cycle, LV_OBJ_FLAG_HIDDEN);
+        if (d->dt_work.machine.support_mode == 1)
+        { //全支撑模式
+            lv_img_set_src( p->bus_state_bg, &bus_state3 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+            }
+
+        }
+        else if (d->dt_work.machine.support_mode == 2)
+        { //左支撑模式
+            lv_img_set_src( p->bus_state_bg, &bus_state7 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 3)
+        { //右支撑模式
+            lv_img_set_src( p->bus_state_bg, &bus_state4 );
+
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 4)
+        { //前支撑模式
+            lv_img_set_src( p->bus_state_bg, &bus_state5 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 6)
+        {//一级腿
+            lv_img_set_src( p->bus_state_bg, &bus_state6 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 7)
+        {//左前
+            lv_img_set_src( p->bus_state_bg, &bus_state2 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_6_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 8)
+        {//右前
+            lv_img_set_src( p->bus_state_bg, &bus_state1 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_5_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 9)
+        {//两级腿
+            lv_img_set_src( p->bus_state_bg, &bus_state6 );
+
+            if(d->dt_work.machine.leg_left_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_1_short, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_left_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_3_long, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_up_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_2_short, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.leg_right_down_collapse == 1)
+            {
+                lv_obj_clear_flag(p->red_leg_4_long, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        else if (d->dt_work.machine.support_mode == 0)
+        { //无支撑模式
+            lv_img_set_src( p->bus_state_bg, &bus_state0 );
+        }
+
+        //回转
+        lv_img_set_angle(p->bus_cycle, d->dt_work.machine.arm0_status);
+    }
+
+    //安全系数
+    if(d->dt_work.machine.support_mode == 10)
+    {
+        lv_obj_clear_flag(p->danger_mode_icon, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(p->safety_bg, LV_OBJ_FLAG_HIDDEN);
+//				lv_obj_clear_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
+//				lv_obj_clear_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
+//				lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
+
+        if(last.safe_k != d->dt_work.machine.safe_k)
+        {
+            if(d->dt_work.machine.safe_k > 200)
+            {
+                d->dt_work.machine.safe_k = 200;
+            }
+            if(d->dt_work.machine.safe_k == 0)
+            {
+                lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
+            }
+            if(d->dt_work.machine.safe_k >= 100 && d->dt_work.machine.safe_k <= 110)
+            {
+                lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_img_set_src(p->danger_mode_icon, &mode_icon3);
+
+                lv_obj_set_size(p->red_obj, 50, 300*(d->dt_work.machine.safe_k - 100)/100.0 );
+                lv_obj_set_pos(p->red_obj, 670, 80 + 195 + 75 + (30 - 300*(d->dt_work.machine.safe_k - 100)/100.0)) ;
+            }
+            else if(d->dt_work.machine.safe_k > 110 && d->dt_work.machine.safe_k <= 135)
+            {
+                lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_img_set_src(p->danger_mode_icon, &mode_icon2);
+
+                lv_obj_set_size(p->red_obj, 50, 30);
+                lv_obj_set_pos(p->red_obj, 670, 80 + 195 + 75);
+
+                lv_obj_set_size(p->yellow_obj, 50, 300*(d->dt_work.machine.safe_k - 110)/100.0 );
+                lv_obj_set_pos(p->yellow_obj, 670, 80 + 195 + (75 - 300*(d->dt_work.machine.safe_k - 110)/100.0)) ;
+            }
+            else if(d->dt_work.machine.safe_k > 135 && d->dt_work.machine.safe_k <= 200)
+            {
+                lv_obj_clear_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_img_set_src(p->danger_mode_icon, &mode_icon1);
+
+                lv_obj_set_size(p->red_obj, 50, 30);
+                lv_obj_set_pos(p->red_obj, 670, 80 + 195 + 75);
+
+                lv_obj_set_size(p->yellow_obj, 50, 75);
+                lv_obj_set_pos(p->yellow_obj, 670, 80 + 195);
+
+                lv_obj_set_size(p->green_obj, 50, 300*(d->dt_work.machine.safe_k - 135)/100.0);
+                lv_obj_set_pos(p->green_obj, 670, 80 + (195 - 300*(d->dt_work.machine.safe_k - 135)/100.0));
+            }
+
+            last.safe_k = d->dt_work.machine.safe_k;
+        }
+    }
+    else
+    {
+        lv_obj_add_flag(p->danger_mode_icon, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->safety_bg, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->green_obj, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->yellow_obj, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(p->red_obj, LV_OBJ_FLAG_HIDDEN);
+    }
+}

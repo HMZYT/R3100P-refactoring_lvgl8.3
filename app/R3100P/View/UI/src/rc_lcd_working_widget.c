@@ -37,3 +37,8 @@ lv_obj_t* working_widget_init()
 
     return widget;
 }
+
+void * working_widget_refresh(void *data)
+{
+
+}

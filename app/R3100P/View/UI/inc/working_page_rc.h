@@ -33,18 +33,21 @@ typedef struct{
     lv_obj_t *btn_emergency;
     lv_obj_t *btn_swing_left;
     lv_obj_t *btn_swing_right;
+    lv_obj_t *btn_quick_set;
     lv_obj_t *label_emergency;
     lv_obj_t *label_lock;
     lv_obj_t *label_displacement;
     lv_obj_t *arms06a;
     lv_obj_t *arms06b;
     lv_obj_t *arms06c;
-    lv_obj_t *label_rig;
-    lv_obj_t *label_dow;
-    lv_obj_t *backlight_bar;
+    lv_obj_t *label_rig_0;
+    lv_obj_t *label_rig_1;
+    lv_obj_t *label_dow_0;
+    lv_obj_t *label_dow_1;
 }working_page_rc_t;
 
 lv_obj_t* working_page_rc_init(lv_obj_t *page);
+void * rc_refresh(void *data);
 extern int bg_light_level;
 #endif
 

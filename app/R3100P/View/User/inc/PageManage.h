@@ -13,13 +13,13 @@ using namespace std;
 
 typedef enum {
     working_page_home,
-    working_page_antipping,
-    working_page_faults,
     working_page_rc,
+    working_page_antipping,
+    working_page_arm,
     working_page_note,
     working_page_setting,
-    working_page_light,
-    working_page_arm,
+    working_page_faults,
+    //working_page_light,
     idle_page_black,
     fact_page_version,
     fact_page_algin,
@@ -35,16 +35,17 @@ typedef struct
 {
     int  pageID;                         //pageID 每个页面有唯一的ID
     lv_obj_t* (*init)(lv_obj_t* page);   //页面初始化
-    void* (*refresh)(lv_obj_t* page, void* data);
+    void* (*refresh)(void* data);
 }PAGE;
 
 class PageManage {
 public:
-    PageManage(PAGE* home_page, lv_obj_t* (*init)(lv_obj_t* page), void* (*_refresh)(lv_obj_t* page, void* data));
+    PageManage();
     ~PageManage();
 
 public:
-    void page_manage_add_page(PAGE* page, int  id, lv_obj_t*(*init)(lv_obj_t* page));
+    static PageManage* GetInstance();
+    void page_manage_add_page(PAGE* page, int  id, lv_obj_t* (*init)(lv_obj_t* page), void* (*refresh)(void* data));
     void page_manage_init_pages(lv_obj_t *iPage);
     void page_manage_switch_page(int id, void* data);
 

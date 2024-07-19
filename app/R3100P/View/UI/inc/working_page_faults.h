@@ -14,7 +14,7 @@ typedef struct{
 }working_page_faults_t;
 
 lv_obj_t* working_page_faults_init(lv_obj_t *page);
-
+void * faults_refresh(void *data);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

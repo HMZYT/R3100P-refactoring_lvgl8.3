@@ -6,9 +6,10 @@
 lv_obj_t *button_lang[LANGUAGE_NUMBER];
 lv_obj_t *language_list;
 
+static working_page_note_t *p;
 lv_obj_t* working_page_note_init(lv_obj_t *page)
 {
-    working_page_note_t *p = lv_mem_alloc(sizeof (working_page_note_t));
+    p = lv_mem_alloc(sizeof (working_page_note_t));
 
     uint16_t parent_width, parent_height;
 
@@ -182,6 +183,11 @@ lv_obj_t* working_page_note_init(lv_obj_t *page)
     lv_obj_add_style(temp_obj, theme_style_get_label_normal_36px_0(), 0);
 
     return obj;
+}
+
+void * note_refresh(void *data)
+{
+
 }
 
 //static void note_observer_list_cb(lv_observer_t *observer, lv_subject_t *subject)

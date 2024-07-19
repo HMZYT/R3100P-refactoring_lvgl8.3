@@ -19,7 +19,7 @@ typedef struct{
 }working_page_setting_t;
 
 lv_obj_t* working_page_setting_init(lv_obj_t *page);
-
+void * settings_refresh(void *data);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

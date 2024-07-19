@@ -17,12 +17,13 @@ using namespace std;
 
 typedef struct {
     lv_obj_t * (*init)();
+    void* (*refresh)(void* data);
 }irc_lcd_widget_t;
 
 
 typedef enum{
-    e_rc_lcd_idle,
     e_rc_lcd_working,
+    e_rc_lcd_idle,
     e_rc_lcd_factory,
     e_rc_lcd_off_charging,
     e_rc_lcd_preparation,
@@ -31,12 +32,13 @@ typedef enum{
 
 class ModeManage {
 public:
-    ModeManage(irc_lcd_widget_t *modeWidget, lv_obj_t* (*init)());
+    ModeManage();
     ~ModeManage();
 
 public:
-    void mode_manage_add_widget(irc_lcd_widget_t *modeWidget, lv_obj_t* (*init)());
-    lv_obj_t *mode_manage_switch_widget(int modeIndex);
+    static ModeManage* GetInstance();
+    void mode_manage_add_widget(irc_lcd_widget_t *modeWidget, lv_obj_t* (*init)(), void* (*refresh)(void* data));
+    lv_obj_t *mode_manage_switch_widget(int modeIndex, void* data);
     void mode_manage_init_widgets();
 private:
     lv_obj_t *currentModeWidget;
